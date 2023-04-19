@@ -1,4 +1,4 @@
-#!/bin/bas
+#!/bin/bash
 
 node ../build.js
 cd lib/theme/
