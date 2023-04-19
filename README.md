@@ -1,4 +1,4 @@
-# style-dictionary-figma-flutter
+# style-dictionary-flutter
 
 An extension to [style-dictionary](https://amzn.github.io/style-dictionary/) to support more custom types with Flutter as target platform. It supports the custom types from Figma's [Design Token plugin](https://www.figma.com/community/plugin/888356646278934516/Design-Tokens).
 
@@ -72,7 +72,7 @@ or:
     bash build.sh
 ```
 
-this will generate *.g.dart file inside ./lib/theme folder
+this will generate *.g.dart file inside ./lib/theme folder which exclude out in this git
 
 From example files: design/design-tokens.example.json
 
