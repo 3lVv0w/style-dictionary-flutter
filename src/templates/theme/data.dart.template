@@ -1,0 +1,123 @@
+<%
+const themeDataClassName = file.prefix + 'ThemeData';
+const isEquatable = file.compareBy === 'equatable';
+
+function propToFinalProperty(prop) {
+    var comment = ''
+    if (prop.comment) {
+       comment = '/// ' + prop.comment + '\n';
+    }
+    return comment + 'final ' + toDartType(prop) + ' ' + prop.name + ';';
+}
+%>
+//
+// <%= file.destination %>
+//
+<%= fileHeader({file, commentStyle: 'short'}) %>
+
+part of 'theme.g.dart';
+
+class <%= themeDataClassName %> <% if(isEquatable) { %>extends Equatable<% }%> {
+   const <%= themeDataClassName %>({
+      <%= Object.entries(allTokens).map(function([categoryName, categoryTokens]) {
+        return 'required this.' + camelCase(categoryName) + ',';
+      }).join('\n      ') %>
+    });
+
+    factory <%= themeDataClassName %>.regular() => _regular;
+
+    static final <%= themeDataClassName %> _regular = <%= themeDataClassName %>(
+      <%=  Object.entries(allTokens).map(function([categoryName, categoryTokens])  {
+        return camelCase(categoryName) + ': ' + file.prefix +  categoryName + 'Data.regular(),';
+      }).join('\n      ') %>
+    );
+
+    <% Object.entries(allTokens).map(function([categoryName, categoryTokens]) { 
+    %><%= 'final ' + file.prefix +  categoryName  + 'Data ' + camelCase(categoryName) + ';' %>
+    <% }); %>
+
+    <% if(isEquatable) { %>
+    @override
+    List<Object> get props => [
+      <% Object.entries(allTokens).map(function([categoryName, categoryTokens]) { 
+      %><%= camelCase(categoryName) + ',' %><% }); %>
+    ];
+    <% } %>
+}
+
+<% Object.entries(allTokens).forEach(entry => {
+  const [categoryName, categoryTokens] = entry;
+    var categoryThemeDataClassName = file.prefix +  categoryName + 'Data';
+    var isConst = categoryName !== 'Vector'
+  %>
+
+<% if(categoryName === 'Vector') { %>
+
+class Vector <% if(isEquatable) { %>extends Equatable<% }%> {
+  const Vector({
+    required this.path,
+    required this.size,
+  });
+  final Path path;
+  final Size size;
+  <% if(isEquatable) { %>
+    @override
+    List<Object> get props => [
+      path,
+      size,
+    ];
+<% }%>
+}
+<% } %>
+
+
+class <%= categoryThemeDataClassName %> <% if(isEquatable) { %>extends Equatable<% }%> {
+   const <%= categoryThemeDataClassName %>({
+      <%= categoryTokens.map(function(prop) {
+        return 'required this.' + prop.name + ',';
+      }).join('\n      ') %>
+    });
+
+
+<% if(isConst) { %>
+    factory <%= categoryThemeDataClassName %>.regular() => const <%= categoryThemeDataClassName %>(
+      <%= categoryTokens.map(function(prop) {
+        return prop.name + ': ' + prop.value + ',';
+      }).join('\n      ') %>
+    );
+<% } else { %>
+  factory <%= categoryThemeDataClassName %>.regular() => <%= categoryThemeDataClassName %>Regular();
+<% } %>
+
+    <% categoryTokens.map(function(prop) {
+    %><%= propToFinalProperty(prop) %>
+    <% }); %>
+
+<% if(isEquatable) { %>
+    @override
+    List<Object> get props => [
+      <% categoryTokens.map(function(prop) {
+      %><%= prop.name + ',' %><% }); %>
+    ];
+<% }%>
+}
+
+<% if(!isConst) { %>
+class <%= categoryThemeDataClassName %>Regular implements <%= categoryThemeDataClassName %> {
+  <%= categoryThemeDataClassName %>Regular();
+
+  <% categoryTokens.map(function(prop) {
+  %>late final <%= toDartType(prop) %> _<%= prop.name %> = <%= prop.value %>;
+  <%= toDartType(prop) %> get <%= prop.name %> => _<%= prop.name %>;
+  <% }); %>
+
+<% if(isEquatable) { %>
+    @override
+    List<Object> get props => [
+      'theme-regular',
+    ];
+<% }%>
+}
+<% }%>
+
+<% }); %>
