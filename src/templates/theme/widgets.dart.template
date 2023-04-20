@@ -8,6 +8,8 @@
 //
 <%= fileHeader({file, commentStyle: 'short'}) %>
 
+// ignore_for_file: always_use_package_imports
+
 import 'package:flutter/widgets.dart';
 <% if(icons && icons.length > 0) { %>import 'package:flutter/rendering.dart';<% } %>
 

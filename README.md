@@ -62,7 +62,7 @@ Define a `config.json` file for your project :
 Run the program:
 
 ```bash
-style-dictionary-figma-flutter
+style-dictionary-flutter
 ```
 
 or:
